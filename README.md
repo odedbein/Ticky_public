@@ -7,8 +7,9 @@ Relevant data is abvailable on: https://osf.io/re2wd/
 * Some of the scripts here were used to prepare the data (e.g., convert the data to nifti, break rois to hemispheres etc.). I put them here just for documentation, but as the data that I uploaded to osf is already prepared for analysis, these scripts are unnecessary. They are marked with:  "Already done, unecessary now."
 * I used participants folders with initials as folder names. In the osf data base, I re-named the folders to be s01-s020. But the scripts are with the subjects initials. So if one downloads the data and want to use these scripts to analyse these data - change the subject names.
 * in the ms, subject 20 was removed from analysis due to entorhinal dropout. I uploaded their data, because no reason not to use if analyzing other ROIs.
+* numbers refer to the order that things should be done, there is some flexibilty though...
 
-## PreprocessingAndModel folder:
+## 1. PreprocessingAndModel folder:
 
 step0_TickyReanalysis_globals: definition file, to be run before starting the analysis/called by other scripts
 
@@ -26,7 +27,7 @@ entorhinal_dropout: the script I used to calculate entorhinal dropout - calculat
 
 wait_for_feat: a script that waits for feat to end running. The modeling code and other codes use it.
 
-### UnivariateGLM
+### 1.1. UnivariateGLM
 
 This analysis was done after I did the single-trial models, to do the voxel selection. I ran it because I wanted a model that is as independent as possible from the single-trial t-stats I used for RSA/connnectivity. Note that the univariate effects reported in the paper are from averaging single-trials (see below). The reasoning was that the main aim was to control for univaraite effects in the RSA/connecitvity analysis. So I wanted to use univariate activation from the same data. If I remember correctly, the pattern was very similar in the two approaches.
 
@@ -53,6 +54,17 @@ step3_SubjectLevel_model-AllTrialsUnivariateLayoutFirst: run the subject level f
 *these step3 scripts also prepare the files for dummy registration - see notes in the scripts*
 *since all analyses were ROI, never ran the group level*
 
-## fsl templates folder:
+## 1.2 fsl templates folder:
 The way the models run is that they take an fsf template file, and change it to be specific to each participant, saves it for each participant, and run feat calling the subject-specific files. These are the templates, and their names are self-explanatory.
+
+## 2. GetSingleTrialsData:
+The file in this folder grabs the single trial t-stats from the nifti files per roi and make a matlab structure with the data, per trial and per voxel. It creates a reg_data**.mat file that is placed in each participant's data folder.
+The get_CueIm_data is for both the hippocampus and main MTL rois.
+* it uses spm_read_vol - I'd now replace that to niftiread function - but pay attention to x/y/z coordinates becasue different functions read the nifti files differently. As long as the command for the ROIs is the same as for the uploading of the data itself - or that the function read nifti files the same way, you're good.
+
+## 3. connectivity
+
+these files grab the reg_data**.mat file, calculate connectivity, and creates a matlab structure with the group results of all rois. Per pairs of rois, it has the connectivity value for each participant, in each task and number of changes.
+
+connectivity_allRegs_SeparateTaskNumChanges: that's the main script, it calculates the connectivity btw regions as above, that's what reported in the paper.
 
