@@ -22,4 +22,5 @@ step5_seg4Dto3D_multiple_subs: I think I had the data all runs concatinated. Thi
 
 step6_model-similarity: runs the LSS models to obtain the single-trial t-stat. Each trial had a cue part and an image part. Creates one t-stat for the cue and one for the image per each trial.
 
+wait_for_feat: a script that waits for feat to end running. The modeling code and other codes use it.
 
