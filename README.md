@@ -26,3 +26,33 @@ entorhinal_dropout: the script I used to calculate entorhinal dropout - calculat
 
 wait_for_feat: a script that waits for feat to end running. The modeling code and other codes use it.
 
+### UnivariateGLM
+
+This analysis was done after I did the single-trial models, to do the voxel selection. I ran it because I wanted a model that is as independent as possible from the single-trial t-stats I used for RSA/connnectivity. Note that the univariate effects reported in the paper are from averaging single-trials (see below). The reasoning was that the main aim was to control for univaraite effects in the RSA/connecitvity analysis. So I wanted to use univariate activation from the same data. If I remember correctly, the pattern was very similar in the two approaches.
+
+Some steps in the analysis that were done before and are identical and should not be done again (e.g., converting from afni to nifti files) are not in this folder. for these steps, see the mother dir of Preprocessing and model
+
+
+#contrasts 10.23.17:
+1-9: the single conditions
+1: 0-changes
+9: 4-changes
+10: 1-changes
+11: 2-changes
+12: 3-changes
+
+#in the subject level analysis, for each cope, cope1 is layout, cope2 is item, cope3 averages both
+
+#AK and LD subject level analysis ran through the gui - different number of scans
+
+scripts:
+step1-create regressors_files: termed step1 here bc I ran it after I did the single trials
+step2_FirstLevel_model-AllTrialsUnivariate: runs the first level (run level) univariate analysis
+step3_SubjectLevel_model-AllTrialsUnivariateItemFirst: run the subject level feat analysis, 
+step3_SubjectLevel_model-AllTrialsUnivariateLayoutFirst: run the subject level feat analysis
+*these step3 scripts also prepare the files for dummy registration - see notes in the scripts*
+*since all analyses were ROI, never ran the group level*
+
+## fsl templates folder:
+The way the models run is that they take an fsf template file, and change it to be specific to each participant, saves it for each participant, and run feat calling the subject-specific files. These are the templates, and their names are self-explanatory.
+
