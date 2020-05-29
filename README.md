@@ -68,3 +68,14 @@ these files grab the reg_data**.mat file, calculate connectivity, and creates a 
 
 connectivity_allRegs_SeparateTaskNumChanges: that's the main script, it calculates the connectivity btw regions as above, that's what reported in the paper.
 
+## 4. RSA
+
+There are two RSA analyses in the paper, prediction strength, and predicion error. They have two different folders.
+
+## 4.1. prediction strength
+
+This analysis generally computes similarity between a cue and the match (0-changes images) of that cue, vs. the match image of other cues.
+CueMatchImagePredictionRSACompOtherRooms: that's the main script that computes the prediction strength. outputs a matlab structure with the prediction strength per roi, per participant, per task. Also creates an R data file, to be used later on for stats. This analysis is reported for CA1 in the supplementary.
+
+CueMatchImagePredictionRSACompOtherRooms_selectVoxels: same as above, but with voxel selection - in the paper we adopted voxel selection for RSA. this is reported in the main text in prediction strength.
+
