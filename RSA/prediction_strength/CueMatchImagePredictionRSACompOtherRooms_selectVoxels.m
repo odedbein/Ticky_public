@@ -12,10 +12,6 @@ function [ResultsCueImSim, ResultsCueImSimItemsCount, ResultsCueImSimOnlyNum, Re
 % to select voxels, you need the activeVoxels structure:
 %load('/Volumes/data/Bein/TickyReanalysis/results/Univar_properGLM_withVoxelSelection.mat')
 
-%med_more: choose whether based on median or on more than.. currently have
-%more t>05
-% 1: median, 0: more than..
-
 % in the paper I didn't remove outliers, tried that for the re-submission -
 % didn't change much I think.
 warning('off','all')
