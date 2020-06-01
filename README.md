@@ -85,3 +85,21 @@ This analysis computes the similarity between the cue and the image.
 CueImageVsOtherRoomsRSA_SeprateTaskNumChanges: that's the main script that computes the analysis. In the paper we reported RSA with voxel selection, the results of this script, i.e., without voxel selection, are reported in the supplementary.
 
 CueImageVsOtherRoomsRSA_SeprateTaskNumChanges_selectVoxels: same as above, with voxel selection - reported in the main text.
+
+## 5. voxel selection (Univariate proper GLM)
+In the manusctipt we did voxel selection based on activity level in voxels. To do that, I used the average activation from a GLM modelling average task activation across trials (for the different bins), than averaged across the 5 levels of changes. I call it "proper GLM" bc it's the traditional way of doing univariate analysis based on task, while for this experiment, the reported univariate was done by averaging across single-trials t-stats (see below, this was bc the main aim was controlling for our other effects).
+
+get_Im_data: gets the data per participant from the nifti files to a matlab stracture
+
+ActivityNumChanges_SeparateTask_allregs: This script also outputs a structure "ActiveVoxels" that has the active voxels within each participant that will be taken for the voxel selection for RSA (high 2thirds of the voxels). 
+
+## 6. univariate analysis (based on average single trials)
+
+Note that the univariate effects reported in the paper are from averaging single-trials. The reasoning was that the main aim was to control for univaraite effects in the RSA/connecitvity analysis. These are the scripts that do this.
+
+In the main text, we report the control for univariate ananlysis for the connectivity finding. In the supplementary, we report the values of the univariate analysis, as well as controling for RSA results.
+
+AverageActivityNumChanges_SeparateTask_cue_image: takes the single trial data and computes the average univariate activation. Note that the single-trial data should have been pulled already from the nifti files (see files in the GetSingleTrialsData folder). This was used to control for univariate activation in the connectivity results (main text), and these are data reported in the Supplementary Figure.
+
+AverageActivity_cue_image_SelVoxProperGLM: in the main text, we reported RSA using voxel selection. Then, we need to do voxel selection to control for univariate activation (these control analyses are reported in the supplementary) - this computes the univariate activation with voxel selection.
+
