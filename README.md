@@ -79,3 +79,9 @@ CueMatchImagePredictionRSACompOtherRooms: that's the main script that computes t
 
 CueMatchImagePredictionRSACompOtherRooms_selectVoxels: same as above, but with voxel selection - in the paper we adopted voxel selection for RSA. this is reported in the main text in prediction strength.
 
+## 4.2. prediction error
+
+This analysis computes the similarity between the cue and the image.
+CueImageVsOtherRoomsRSA_SeprateTaskNumChanges: that's the main script that computes the analysis. In the paper we reported RSA with voxel selection, the results of this script, i.e., without voxel selection, are reported in the supplementary.
+
+CueImageVsOtherRoomsRSA_SeprateTaskNumChanges_selectVoxels: same as above, with voxel selection - reported in the main text.
