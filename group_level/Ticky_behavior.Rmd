@@ -1,0 +1,147 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+
+```{r setup}
+# clear workspace
+rm(list = ls())
+#load some libraries
+library(dplyr)
+library(tidyverse)
+library(lme4)
+#library(xlsx)
+library(effsize)
+library(readxl)
+library(reshape)
+library(knitr)
+library(RColorBrewer)
+library(ggpubr)
+library(gridExtra)
+#library(sjstats)
+
+#on the server
+proj_dir <- sprintf("/Volumes/data/Bein/TickyReanalysis/results/data_in_paper")
+setwd(proj_dir)
+knitr::opts_knit$set(root.dir = proj_dir)
+```
+
+```{r}
+setwd(proj_dir)
+#set up the greys:
+all_spectral<-brewer.pal(9,"Greys")
+myspec <-all_spectral[c(3:7)]
+
+#ACCURACY:
+get_data <- read_excel("Ticky_dataR.xlsx", sheet = "ACC_N19_noAD")
+n=nrow(get_data)
+
+#set up data for ANOVA:
+curr_data <- data.frame(
+    task = c(rep('lay', n*5),rep('item', n*5)),
+    changes = factor(rep(rep(0:4, each=n),2)),
+    subject = factor(rep(1:n, 5*2)),
+    y = c(get_data$lay0,get_data$lay1,get_data$lay2,get_data$lay3,get_data$lay4,
+          get_data$item0,get_data$item1,get_data$item2,get_data$item3,get_data$item4))
+
+results.rmanova=aov(y ~ task*changes + Error(subject/(task*changes)), data = curr_data)
+summary(results.rmanova)
+
+#average across tasks and plot:
+data_sum_per_sub <- curr_data %>%
+    group_by(subject,changes) %>%
+    summarise(y = mean(y))
+
+data_sum <- data_sum_per_sub %>%
+  group_by(changes) %>%
+  summarise(mean_d = mean(y),
+              SEM_d = sd(y)/sqrt(n()),
+              n_data=n())
+
+#plot (no data points):
+plt_acc <- ggplot(data_sum, aes(x = changes, y = mean_d, fill=changes)) +
+  geom_col(color = "black") +
+  geom_errorbar(aes(ymin = mean_d - SEM_d, ymax = mean_d + SEM_d),width=0) +
+  coord_cartesian(ylim=c(.5,.95)) +
+  scale_fill_manual(values = myspec) +
+  scale_color_manual(values = "black") +
+  labs(x = '# of changes', y = 'Accuracy') + 
+  theme_classic() + theme(legend.position = "none")
+
+
+#plot (w/ data points):
+plt_acc <- ggplot(data_sum, aes(x = changes, y = mean_d, fill=changes)) +
+  geom_col(color = "black") +
+  geom_point(data = data_sum_per_sub, aes(x = changes, y = y,fill=changes), alpha = .4,
+             position = position_jitterdodge(jitter.width = .7,dodge.width = -.1)) +
+  geom_errorbar(aes(ymin = mean_d - SEM_d, ymax = mean_d + SEM_d),width=0,position = position_nudge(x = .2)) +
+  coord_cartesian(ylim=c(.5,.95)) +
+  scale_fill_manual(values = myspec) +
+  scale_color_manual(values = "black") +
+  labs(x = '# of changes', y = 'Accuracy') + 
+  theme_classic() + theme(legend.position = "none")
+
+
+#RT (only accurate responses): 
+get_data <- read_excel("Ticky_dataR.xlsx", sheet = "RTs_N19_noAD_onlyAcc")
+n=nrow(get_data)
+
+#set up data for ANOVA:
+curr_data <- data.frame(
+    task = c(rep('lay', n*5),rep('item', n*5)),
+    changes = factor(rep(rep(0:4, each=n),2)),
+    subject = factor(rep(1:n, 5*2)),
+    y = c(get_data$lay0,get_data$lay1,get_data$lay2,get_data$lay3,get_data$lay4,
+          get_data$item0,get_data$item1,get_data$item2,get_data$item3,get_data$item4))
+
+results.rmanova=aov(y ~ task*changes + Error(subject/(task*changes)), data = curr_data)
+summary(results.rmanova)
+
+#average across tasks and plot:
+data_sum_per_sub <- curr_data %>%
+    group_by(subject,changes) %>%
+    summarise(y = mean(y)/1000)
+
+data_sum <- data_sum_per_sub %>%
+  group_by(changes) %>%
+  summarise(mean_d = mean(y),
+              SEM_d = sd(y)/sqrt(n()),
+              n_data=n())
+
+#plot (no data points):
+plt_RT <- ggplot(data_sum, aes(x = changes, y = mean_d, fill=changes)) +
+  geom_col(color = "black") +
+  geom_errorbar(aes(ymin = mean_d - SEM_d, ymax = mean_d + SEM_d),width=0) +
+  coord_cartesian(ylim=c(1.8,2.4)) +
+  scale_fill_manual(values = myspec) +
+  scale_color_manual(values = "black") +
+  labs(x = '# of changes', y = 'RT(s)') + 
+  theme_classic() + theme(legend.position = "none")
+
+plt_RT <- ggplot(data_sum, aes(x = changes, y = mean_d, fill=changes)) +
+  geom_col(color = "black") +
+  geom_point(data = data_sum_per_sub, aes(x = changes, y = y,fill=changes), alpha = .4,
+             position = position_jitterdodge(jitter.width = .7,dodge.width = -.1)) +
+  geom_errorbar(aes(ymin = mean_d - SEM_d, ymax = mean_d + SEM_d),width=0,position = position_nudge(x = .2)) +
+  coord_cartesian(ylim=c(1.6,3)) +
+  scale_fill_manual(values = myspec) +
+  scale_color_manual(values = "black") +
+  labs(x = '# of changes', y = 'RT(s)') + 
+  theme_classic() + theme(legend.position = "none")
+
+### plot acc and RT
+grid.arrange(plt_acc,plt_RT,nrow=1)
+
+
+```
+
