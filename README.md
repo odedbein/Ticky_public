@@ -103,3 +103,51 @@ AverageActivityNumChanges_SeparateTask_cue_image: takes the single trial data an
 
 AverageActivity_cue_image_SelVoxProperGLM: in the main text, we reported RSA using voxel selection. Then, we need to do voxel selection to control for univariate activation (these control analyses are reported in the supplementary) - this computes the univariate activation with voxel selection.
 
+## 7. all group level analyses  
+
+Mostly, the analyses scripts above created a data structure with all subjects and all bins/conditions etc - ready to run group level stats and plots. This folder does that for all analyses. I like having all the group level stuff in one folder, across various analyses, because it's easy for me to look at things in parallel, analyse across analyses.
+
+*some scripts have the option of looking by accuracy - we did that in response to reviewer, we didn't find any differences based on accuracy, so the results in the paper are based on all items, regardless of accuracy in the task
+*I started the group analyses in matlab, then shifted to R, that's why the scripts are a mix of the two, and there's some redundency.
+
+*In some group analysis plots I calculate SEM based on some within-participant measures. While this is useful for looking at the data, for reporting, SEM should be done the standard way. Since most plots were taken from R eventually anyway, I didn't bother changing it.
+
+*The prediction strength and prediction error were reported in the main text with voxel-selection. We also report without - note that the same group-level matlab scripts provide stats for both - just with uploading a different data structure.
+
+*for convenience, I also placed in this folder txt/Excel files that are needed for the group analyses in R.
+
+TickyDataR.xlsx: includes spreadsheets with data that is later uploaded in the GroupImaging.R scripts. Whenever needed, I explain below how the data for this file was created.
+
+##### behavior:
+Behavior_acc_RTs_SeparateTaskNumChanges: this runs the behavioral analysis and creates a group structure.
+
+plot_Behavior_SeparateTask_NumChanges: plots some things and does stats. I shifted to R along the way, but kept this script. It is used to produce the data structure in an easy way for data analysis in R. *note that plots and stats were eventually done and reported using R - see script below.
+
+Ticky_behavior.Rmd: basic stats and plotting of the behavior.
+
+##### connectivity:
+
+plot_region_connectivity_SeparateTask_NumChanges: this script does stats and plots, I shifted to R along the way, but kept this script. it's pretty much unnecessary now. 
+makeRdataStructureHemiRegANOVA: makes the data file for R to run the three-way region by changes by hemisphere ANOVA
+makeRdataStructureConUnivar: makes the data file for each pair of regions for connectivity, including univariate activation and RT/accuracy models. Control for univariate is reported, RT/accuracy models was done in response to reviewers. eventually we took the actual RT/accuracy rates per participant, but this works the same.
+
+##### prediction strength:
+Con_CueMatchImVsOtherRoomsPredictabilityRSA_AcrossSubCorrel: this computes the prediction strength, as well as the correlation with connectivity. 
+
+CA1_prediction_CA1_ent_con.xlsx: control analyses for the prediction strength and correlation were done with R (GroupImaging.R, see below). The values for the R analyses are loaded from this excel file.
+Here is where I took the values from:
+The activation values for control for perdiction strength: the script that runs the prediction strength create these values (CueMatchImagePredictionRSACompOtherRooms_selectVoxels, see above). I took the data from AvPerTaskNo0Changes, which means that each task is averaged first, then in the excel file I average across tasks when needed. This is for the cues and the match images. if you check intact_image_act.all_items you'll see 6 columns, they match the 6 columns in the excel file that correspond to the images (columns L-Q).
+The activation values for control for the connectivity I copy pasted from the data after script that computes the univariate activation based on single-trials (AverageActivityNumChanges_SeparateTask_cue_image, see above).
+
+##### prediction error:
+plot_region_CueImageOtherImRSA_SeparateTask_NumChanges: This script runs the group-level analysis and plot stuff for the PE analysis. results and stats are based on that script, and the bars in Figure 3 in the ms is from this file.
+*this script also has the option of looking at similarity subtracting other images, a control that is reported in Supplementary Note 5.
+
+The data for the control analysis for univariate (see GroupImaging.R) was done by copy-paste to the relevant excel sheet, from running the script above and the relevant univariate analysis (single-trials).
+
+##### univariate
+plot_region_activity_SeparatedTask_NumberChanges: does some plots (not that supp figure is from the Groupimaging script), and run stats - stats reported in the paper are based on this file 
+
+##### GroupImaging.R script:
+Includes a lot of the control analyses that I've done in the paper, as well as the code that plots most of the graphs. See the script itself for the specific plots/stats.
+
